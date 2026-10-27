@@ -173,3 +173,56 @@ def test_home_page_without_ratings_shows_no_count(my_context):
 
     assert response.status_code == 200
     assert "players in the" not in response.text
+
+
+def test_home_page_lists_the_top_players_by_standard_rating(my_context):
+    client = requests.with_context(my_context)
+    stronger = {**SERGIO, "fide_id": 1503014, "name": "Carlsen, Magnus", "standard_rating": 2830}
+    old_list = {**SERGIO, "fide_id": 2, "name": "Old Leader", "rating_month": 9, "standard_rating": 2900}
+    client.post("/api/v1/fide/ratings", headers=API_KEY, json=[SERGIO, stronger, old_list])
+
+    page = client.get("/").text
+
+    assert "Top 10 by standard rating" in page
+    assert page.index("Carlsen, Magnus") < page.index("Del Amo Caballero, Sergio")
+    assert 'href="/fide/ratings/1503014"' in page
+    assert "Old Leader" not in page  # only the latest list is ranked
+
+
+def test_home_page_lists_federations_alphabetically_with_flags(my_context):
+    client = requests.with_context(my_context)
+    germany = {**SERGIO, "fide_id": 2, "name": "Player, German", "fed": "GER"}
+    england = {**SERGIO, "fide_id": 3, "name": "Player, English", "fed": "ENG"}
+    old_list = {**SERGIO, "fide_id": 4, "name": "Old", "fed": "FRA", "rating_month": 9}
+    client.post("/api/v1/fide/ratings", headers=API_KEY, json=[SERGIO, germany, england, old_list])
+
+    page = client.get("/").text
+
+    assert "<h2>Federations</h2>" in page
+    assert '\U0001F1EA\U0001F1F8 <a href="/fide/ratings/federation/ESP">Spain</a>' in page  # 🇪🇸
+    assert '\U0001F1E9\U0001F1EA <a href="/fide/ratings/federation/GER">Germany</a>' in page  # 🇩🇪
+    assert page.index(">England<") < page.index(">Germany<") < page.index(">Spain<")  # by name, not by code
+    assert "federation/FRA" not in page  # only the latest list
+
+
+def test_federation_page_lists_its_top_players(my_context):
+    client = requests.with_context(my_context)
+    spanish = {**SERGIO, "fide_id": 2, "name": "Strong, Spanish", "standard_rating": 2600}
+    german = {**SERGIO, "fide_id": 3, "name": "Player, German", "fed": "GER", "standard_rating": 2700}
+    client.post("/api/v1/fide/ratings", headers=API_KEY, json=[SERGIO, spanish, german])
+
+    response = client.get("/fide/ratings/federation/ESP")
+
+    assert response.status_code == 200
+    page = response.text
+    assert "<h1>\U0001F1EA\U0001F1F8 Spain</h1>" in page
+    assert page.index("Strong, Spanish") < page.index("Del Amo Caballero, Sergio")
+    assert 'href="/fide/ratings/2"' in page
+    assert "Player, German" not in page
+
+
+def test_federation_page_not_found(my_context):
+    client = requests.with_context(my_context)
+    client.post("/api/v1/fide/ratings", headers=API_KEY, json=[SERGIO])
+
+    assert client.get("/fide/ratings/federation/XXX").status_code == 404

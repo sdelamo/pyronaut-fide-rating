@@ -72,3 +72,23 @@ class PlayerRepository(CrudRepository[Player, int]):
 
     @Query("SELECT COUNT(*) FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth")
     def count_by_period(self, ratingYear: int, ratingMonth: int) -> int: ...
+
+    @Query(
+        "SELECT * FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth "
+        "ORDER BY standard_rating DESC LIMIT :limit"
+    )
+    def find_top_by_standard_rating(self, ratingYear: int, ratingMonth: int, limit: int) -> list[Player]: ...
+
+    @Query(
+        "SELECT * FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth AND fed = :fed "
+        "ORDER BY standard_rating DESC LIMIT :limit"
+    )
+    def find_top_by_federation_and_standard_rating(
+        self, ratingYear: int, ratingMonth: int, fed: str, limit: int
+    ) -> list[Player]: ...
+
+    @Query(
+        "SELECT DISTINCT fed FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth "
+        "AND fed IS NOT NULL"
+    )
+    def find_federations(self, ratingYear: int, ratingMonth: int) -> list[str]: ...

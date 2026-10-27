@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ name|escape }} - FIDE ratings</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid #ddd; }
+  .num { text-align: right; }
+  .period { color: #666; margin-top: 0; }
+</style>
+</head>
+<body>
+<p><a href="/">&larr; All federations</a></p>
+<h1>{{ flag }} {{ name|escape }}</h1>
+<p class="period">Top 10 by standard rating in the {{ period }} rating list</p>
+<table>
+  <thead><tr><th>#</th><th>Player</th><th class="num">Standard</th></tr></thead>
+  <tbody>
+  {% for player in top %}<tr><td>{{ player.rank }}</td><td><a href="{{ player.link }}">{{ player.name|escape }}</a></td><td class="num">{{ player.rating }}</td></tr>
+  {% endfor %}</tbody>
+</table>
+</body>
+</html>

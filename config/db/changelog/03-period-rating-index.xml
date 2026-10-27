@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  <changeSet id="03" author="username">
+    <!-- ranks the players of a rating list by standard rating without sorting the whole list -->
+    <createIndex tableName="player" indexName="idx_player_period_standard_rating">
+      <column name="rating_year"/>
+      <column name="rating_month"/>
+      <column name="standard_rating"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>

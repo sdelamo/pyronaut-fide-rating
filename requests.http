@@ -1,0 +1,84 @@
+### Demo requests for the FIDE ratings app (PyCharm HTTP Client)
+# Start the app with the key exported, and start PyCharm with the same variable in its environment:
+#   export FIDE_API_KEY=<secret>
+#   pyronaut dev
+# Load the lists first (see scripts/import_ratings.py), or use the POST below to add one player.
+
+@host = http://localhost:8080
+@apiKey = {{$processEnv FIDE_API_KEY}}
+@fideId = 535004274
+
+### 1. Home page: search form and the number of players in the latest list
+GET {{host}}/
+
+### 2. What the home page form submits: redirects (303) to /fide/ratings/{fideId}
+# @no-redirect
+GET {{host}}/fide/ratings?fide_id={{fideId}}
+
+### 3. Player profile page: name, latest ratings, federation, gender, birth year, title and the progress chart
+GET {{host}}/fide/ratings/{{fideId}}
+
+### 4. A player with a FIDE title (Magnus Carlsen)
+GET {{host}}/fide/ratings/1503014
+
+### 4b. Federation page: top 10 players of a federation (linked from the home page)
+GET {{host}}/fide/ratings/federation/ESP
+
+### 5. Latest rating as JSON
+GET {{host}}/api/v1/fide/ratings/{{fideId}}/latest
+Accept: application/json
+
+### 6. Unknown player: 404 on the JSON API
+GET {{host}}/api/v1/fide/ratings/1/latest
+Accept: application/json
+
+### 7. Unknown player: 404 on the profile page
+GET {{host}}/fide/ratings/1
+
+### 8. Save a rating without an API key: 401
+POST {{host}}/api/v1/fide/ratings
+Content-Type: application/json
+
+[
+  {"fide_id": 535004274, "rating_year": 2026, "rating_month": 10, "name": "Del Amo Caballero, Sergio"}
+]
+
+### 9. Save a rating with a wrong API key: 401
+POST {{host}}/api/v1/fide/ratings
+Content-Type: application/json
+X-API-KEY: wrong
+
+[
+  {"fide_id": 535004274, "rating_year": 2026, "rating_month": 10, "name": "Del Amo Caballero, Sergio"}
+]
+
+### 10. Save ratings with the API key: 201 {"saved": n, "skipped": n}
+# Send it twice: the second time the entries are reported as skipped, not as an error.
+POST {{host}}/api/v1/fide/ratings
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+
+[
+  {
+    "fide_id": 535004274, "rating_year": 2026, "rating_month": 10,
+    "name": "Del Amo Caballero, Sergio", "fed": "ESP", "sex": "M", "birth_year": 1982,
+    "standard_rating": 1598, "standard_games": 0, "standard_k": 40,
+    "rapid_rating": 1668, "rapid_games": 0, "rapid_k": 40,
+    "blitz_rating": 1610, "blitz_games": 0, "blitz_k": 20
+  }
+]
+
+### 11. Save a second period so the chart has two points, then reload request 3
+POST {{host}}/api/v1/fide/ratings
+Content-Type: application/json
+X-API-KEY: {{apiKey}}
+
+[
+  {
+    "fide_id": 535004274, "rating_year": 2026, "rating_month": 9,
+    "name": "Del Amo Caballero, Sergio", "fed": "ESP", "sex": "M", "birth_year": 1982,
+    "standard_rating": 1590, "standard_games": 0, "standard_k": 40,
+    "rapid_rating": 1660, "rapid_games": 0, "rapid_k": 40,
+    "blitz_rating": 1600, "blitz_games": 0, "blitz_k": 20
+  }
+]
