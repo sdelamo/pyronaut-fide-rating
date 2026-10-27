@@ -1,12 +1,6 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ name|escape }} - FIDE ratings</title>
-<link rel="stylesheet" href="/static/styles.css">
-</head>
-<body>
+{% extends "layout.jinja" %}
+{% block title %}{{ name|escape }} - FIDE ratings{% endblock %}
+{% block content %}
 <p><a href="/">&larr; Home</a></p>
 <h1>{{ name|escape }}</h1>
 <p class="period">Latest rating list: {{ period }}</p>
@@ -21,6 +15,4 @@
   {% for rating in ratings %}<div class="rating"><span>{{ rating.label }}</span><strong>{{ rating.value }}</strong></div>
   {% endfor %}</div>
 {{ chart }}
-<footer><a href="/swagger-ui/index.html">API documentation</a></footer>
-</body>
-</html>
+{% endblock %}

@@ -1,21 +1,8 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ name|escape }} - FIDE ratings</title>
-<link rel="stylesheet" href="/static/styles.css">
-</head>
-<body>
+{% extends "layout.jinja" %}
+{% block title %}{{ name|escape }} - FIDE ratings{% endblock %}
+{% block content %}
 <p><a href="/">&larr; All federations</a></p>
 <h1>{{ flag }} {{ name|escape }}</h1>
 <p class="period">Top 10 by standard rating in the {{ period }} rating list</p>
-<table>
-  <thead><tr><th>#</th><th>Player</th><th class="num">Standard</th></tr></thead>
-  <tbody>
-  {% for player in top %}<tr><td>{{ player.rank }}</td><td><a href="{{ player.link }}">{{ player.name|escape }}</a></td><td class="num">{{ player.rating }}</td></tr>
-  {% endfor %}</tbody>
-</table>
-<footer><a href="/swagger-ui/index.html">API documentation</a></footer>
-</body>
-</html>
+{% include "top_players.jinja" %}
+{% endblock %}

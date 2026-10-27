@@ -185,6 +185,7 @@ def test_home_page_lists_the_top_players_by_standard_rating(my_context):
     page = client.get("/").text
 
     assert "Top 10 by standard rating" in page
+    assert "<th>Fed</th>" in page  # the home page shows each player's federation
     assert page.index("Carlsen, Magnus") < page.index("Del Amo Caballero, Sergio")
     assert 'href="/fide/ratings/1503014"' in page
     assert "Old Leader" not in page  # only the latest list is ranked
@@ -220,6 +221,8 @@ def test_federation_page_lists_its_top_players(my_context):
     assert page.index("Strong, Spanish") < page.index("Del Amo Caballero, Sergio")
     assert 'href="/fide/ratings/2"' in page
     assert "Player, German" not in page
+    assert "<th>Fed</th>" not in page  # every player is from this federation
+    assert page.count("<footer>") == 1 and page.count("<html") == 1  # one layout
 
 
 def test_federation_page_not_found(my_context):
@@ -257,6 +260,9 @@ def test_api_documentation_is_served_and_linked_from_the_pages(my_context):
     spec = client.get("/swagger/fide-ratings-1.0.yml")
     assert spec.status_code == 200
     assert "/api/v1/fide/ratings" in spec.text
+    assert "type: apiKey" in spec.text and "name: X-API-KEY" in spec.text  # the scheme the POST requires
+    assert "- apiKey: []" in spec.text
+    assert "The X-API-KEY header is missing or wrong" in spec.text
 
     for path in ("/", "/fide/ratings/535004274", "/fide/ratings/federation/ESP"):
         assert '<a href="/swagger-ui/index.html">API documentation</a>' in client.get(path).text

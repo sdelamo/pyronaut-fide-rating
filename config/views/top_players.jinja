@@ -1,0 +1,6 @@
+<table>
+  <thead><tr><th>#</th><th>Player</th>{% if show_federation %}<th>Fed</th>{% endif %}<th class="num">Standard</th></tr></thead>
+  <tbody>
+  {% for player in top %}<tr><td>{{ player.rank }}</td><td><a href="{{ player.link }}">{{ player.name|escape }}</a></td>{% if show_federation %}<td>{{ player.federation|escape }}</td>{% endif %}<td class="num">{{ player.rating }}</td></tr>
+  {% endfor %}</tbody>
+</table>

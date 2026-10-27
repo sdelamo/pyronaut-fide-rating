@@ -1,12 +1,5 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FIDE ratings</title>
-<link rel="stylesheet" href="/static/styles.css">
-</head>
-<body>
+{% extends "layout.jinja" %}
+{% block content %}
 <h1>FIDE ratings</h1>
 <form action="/fide/ratings" method="get">
   <input type="text" name="fide_id" inputmode="numeric" pattern="[0-9]+" placeholder="FIDE ID" aria-label="FIDE ID" required autofocus>
@@ -15,17 +8,11 @@
 {% if players %}<p class="count"><strong>{{ players }}</strong> players in the {{ period }} rating list</p>
 {% endif %}
 {% if top %}<h2>Top 10 by standard rating</h2>
-<table>
-  <thead><tr><th>#</th><th>Player</th><th>Fed</th><th class="num">Standard</th></tr></thead>
-  <tbody>
-  {% for player in top %}<tr><td>{{ player.rank }}</td><td><a href="{{ player.link }}">{{ player.name|escape }}</a></td><td>{{ player.federation|escape }}</td><td class="num">{{ player.rating }}</td></tr>
-  {% endfor %}</tbody>
-</table>
+{% set show_federation = true %}{% include "top_players.jinja" %}
 {% endif %}
 {% if federations %}<h2>Federations</h2>
 <ul class="federations">
   {% for federation in federations %}<li>{{ federation.flag }} <a href="{{ federation.link }}">{{ federation.name|escape }}</a> <span class="code">{{ federation.code|escape }}</span></li>
   {% endfor %}</ul>
-{% endif %}<footer><a href="/swagger-ui/index.html">API documentation</a></footer>
-</body>
-</html>
+{% endif %}
+{% endblock %}

@@ -21,11 +21,8 @@ repository: Annotated[PlayerRepository, Inject]
     summary="Save the ratings of a rating list",
     description="Entries already stored for the same FIDE ID, year and month are skipped, so a list can be re-imported.",
     security=[SecurityRequirement(name="apiKey")],
-    responses=[
-        ApiResponse(responseCode="201", description="Entries saved; the body counts the saved and skipped ones"),
-        ApiResponse(responseCode="401", description="The X-API-KEY header is missing or wrong"),
-    ],
 )
+@ApiResponse(responseCode="401", description="The X-API-KEY header is missing or wrong")
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Status(HttpStatus.CREATED)
 def save_ratings(players: Annotated[list[Player], Body]) -> dict[str, int]:
