@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "pyronaut-cli": {
+      "source": "micronaut-projects/pyronaut-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/pyronaut-cli/SKILL.md",
+      "computedHash": "10c92d9e5f445084b356e111248a937a3e4a84c2ec38879a32cc2f98450205e7"
+    },
+    "pyronaut-coding": {
+      "source": "micronaut-projects/pyronaut-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/pyronaut-coding/SKILL.md",
+      "computedHash": "dafaa54fed8586bcbafae4c161286df2f08271f4f1276f3cb70b06f9f01fe33e"
+    },
+    "pyronaut-project": {
+      "source": "micronaut-projects/pyronaut-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/pyronaut-project/SKILL.md",
+      "computedHash": "f52b0bd81ea170c7098e941d202fab571c4c4df9a5552c0f0c9f7ea6633b4394"
+    }
+  }
+}
