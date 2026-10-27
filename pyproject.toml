@@ -27,7 +27,7 @@ repositories = [
 ]
 
 [tool.pyronaut.core]
-version = "5.2.19"
+version = "5.2.20"
 
 [tool.pyronaut.platform]
 version = "5.2.3"
