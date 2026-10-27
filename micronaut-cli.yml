@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: pyronaut.fide.ratings
+testFramework: pytest
+sourceLanguage: python
+buildTool: pyronaut
+features: [app-name, gitignore, http-client-test, logback, micronaut-http-validation, netty-server, pyronaut, pyronaut-agent-skills, pyronaut-requests, pytest, python, python-application, readme, serialization-jackson, static-resources, toml]

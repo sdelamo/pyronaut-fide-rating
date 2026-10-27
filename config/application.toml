@@ -1,0 +1,2 @@
+[micronaut.application]
+name = 'pyronaut-fide-ratings'
