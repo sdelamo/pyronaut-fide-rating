@@ -247,3 +247,16 @@ def test_pages_link_the_style_sheet(my_context):
         page = client.get(path).text
         assert '<link rel="stylesheet" href="/static/styles.css">' in page
         assert "<style>" not in page
+
+
+def test_api_documentation_is_served_and_linked_from_the_pages(my_context):
+    client = requests.with_context(my_context)
+    client.post("/api/v1/fide/ratings", headers=API_KEY, json=[SERGIO])
+
+    assert client.get("/swagger-ui/index.html").status_code == 200
+    spec = client.get("/swagger/fide-ratings-1.0.yml")
+    assert spec.status_code == 200
+    assert "/api/v1/fide/ratings" in spec.text
+
+    for path in ("/", "/fide/ratings/535004274", "/fide/ratings/federation/ESP"):
+        assert '<a href="/swagger-ui/index.html">API documentation</a>' in client.get(path).text

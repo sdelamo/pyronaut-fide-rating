@@ -1,7 +1,9 @@
 from typing import Annotated
 
 from jakarta.inject import Inject
-from io.swagger.v3.oas.annotations import Hidden
+from io.swagger.v3.oas.annotations import Hidden, Operation
+from io.swagger.v3.oas.annotations.responses import ApiResponse
+from io.swagger.v3.oas.annotations.security import SecurityRequirement
 from micronaut.http import HttpResponse, HttpStatus
 from micronaut.http.annotation import Body, Get, Post, Status
 from micronaut.security.annotation import Secured
@@ -15,6 +17,15 @@ repository: Annotated[PlayerRepository, Inject]
 
 
 @Post("/api/v1/fide/ratings")
+@Operation(
+    summary="Save the ratings of a rating list",
+    description="Entries already stored for the same FIDE ID, year and month are skipped, so a list can be re-imported.",
+    security=[SecurityRequirement(name="apiKey")],
+    responses=[
+        ApiResponse(responseCode="201", description="Entries saved; the body counts the saved and skipped ones"),
+        ApiResponse(responseCode="401", description="The X-API-KEY header is missing or wrong"),
+    ],
+)
 @Secured(SecurityRule.IS_AUTHENTICATED)
 @Status(HttpStatus.CREATED)
 def save_ratings(players: Annotated[list[Player], Body]) -> dict[str, int]:

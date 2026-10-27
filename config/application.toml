@@ -20,3 +20,20 @@ mapping = '/static/**'
 [[micronaut.security.intercept-url-map]]
 pattern = '/static/**'
 access = ['isAnonymous()']
+
+# OpenAPI documentation: the generated spec at /swagger/fide-ratings-1.0.yml and Swagger UI at /swagger-ui/index.html
+[micronaut.router.static-resources.swagger]
+paths = ['classpath:META-INF/swagger']
+mapping = '/swagger/**'
+
+[micronaut.router.static-resources.swagger-ui]
+paths = ['classpath:META-INF/swagger/views/swagger-ui']
+mapping = '/swagger-ui/**'
+
+[[micronaut.security.intercept-url-map]]
+pattern = '/swagger/**'
+access = ['isAnonymous()']
+
+[[micronaut.security.intercept-url-map]]
+pattern = '/swagger-ui/**'
+access = ['isAnonymous()']

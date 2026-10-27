@@ -26,5 +26,6 @@
 <ul class="federations">
   {% for federation in federations %}<li>{{ federation.flag }} <a href="{{ federation.link }}">{{ federation.name|escape }}</a> <span class="code">{{ federation.code|escape }}</span></li>
   {% endfor %}</ul>
-{% endif %}</body>
+{% endif %}<footer><a href="/swagger-ui/index.html">API documentation</a></footer>
+</body>
 </html>
