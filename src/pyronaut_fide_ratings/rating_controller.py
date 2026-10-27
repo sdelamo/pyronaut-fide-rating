@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from jakarta.inject import Inject
+from io.swagger.v3.oas.annotations import Hidden
 from micronaut.http import HttpResponse, HttpStatus
 from micronaut.http.annotation import Body, Get, Post, Status
 from micronaut.security.annotation import Secured
@@ -33,6 +34,7 @@ def latest_rating(fide_id: int) -> Player | None:
 
 
 @Get("/fide/ratings/{fide_id}")
+@Hidden
 @Secured(SecurityRule.IS_ANONYMOUS)
 @View("profile")
 def rating_profile(fide_id: int) -> HttpResponse | ProfileModel:

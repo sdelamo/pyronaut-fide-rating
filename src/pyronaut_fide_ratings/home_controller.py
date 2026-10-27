@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Annotated
 
 from jakarta.inject import Inject
+from io.swagger.v3.oas.annotations import Hidden
 from java.net import URI
 from micronaut.http import HttpResponse
 from micronaut.http.annotation import Get
@@ -37,6 +38,7 @@ class HomeModel:
 
 
 @Get("/")
+@Hidden
 @Secured(SecurityRule.IS_ANONYMOUS)
 @View("home")
 def home() -> HomeModel:
@@ -59,6 +61,7 @@ def home() -> HomeModel:
 
 # A GET form can only submit a query string, so this turns ?fide_id=... into the path URL
 @Get("/fide/ratings")
+@Hidden
 @Secured(SecurityRule.IS_ANONYMOUS)
 def search(fide_id: int) -> HttpResponse:
     return HttpResponse.seeOther(URI.create(f"/fide/ratings/{fide_id}"))

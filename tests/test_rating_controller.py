@@ -106,6 +106,7 @@ def test_rating_profile_page(my_context):
     assert "<strong>1668</strong>" in page
     assert "<strong>1610</strong>" in page
     assert "FIDE title" not in page  # Sergio has no title
+    assert '<a href="/">' in page  # link back to the home page
     assert "<svg" in page and "2026-09" in page and "2026-10" in page
 
 
@@ -226,3 +227,23 @@ def test_federation_page_not_found(my_context):
     client.post("/api/v1/fide/ratings", headers=API_KEY, json=[SERGIO])
 
     assert client.get("/fide/ratings/federation/XXX").status_code == 404
+
+
+def test_style_sheet_is_served_without_an_api_key(my_context):
+    client = requests.with_context(my_context)
+
+    response = client.get("/static/styles.css")
+
+    assert response.status_code == 200
+    assert "text/css" in response.headers["Content-Type"]
+    assert "font-family" in response.text
+
+
+def test_pages_link_the_style_sheet(my_context):
+    client = requests.with_context(my_context)
+    client.post("/api/v1/fide/ratings", headers=API_KEY, json=[SERGIO])
+
+    for path in ("/", "/fide/ratings/535004274", "/fide/ratings/federation/ESP"):
+        page = client.get(path).text
+        assert '<link rel="stylesheet" href="/static/styles.css">' in page
+        assert "<style>" not in page

@@ -4,20 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ name|escape }} - FIDE ratings</title>
-<style>
-  body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
-  h1 { margin-bottom: .25rem; }
-  .period { color: #666; margin-top: 0; }
-  dl { display: flex; flex-wrap: wrap; gap: 1.5rem; }
-  dt { color: #666; font-size: .85rem; }
-  dd { margin: 0; font-weight: 600; }
-  .ratings { display: flex; gap: 1rem; margin: 1.5rem 0; }
-  .rating { flex: 1; padding: 1rem; border: 1px solid #ccc; border-radius: .5rem; text-align: center; }
-  .rating span { display: block; color: #666; font-size: .85rem; }
-  .rating strong { font-size: 1.75rem; }
-</style>
+<link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+<p><a href="/">&larr; Home</a></p>
 <h1>{{ name|escape }}</h1>
 <p class="period">Latest rating list: {{ period }}</p>
 <dl>

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Annotated
 
 from jakarta.inject import Inject
+from io.swagger.v3.oas.annotations import Hidden
 from micronaut.http import HttpResponse
 from micronaut.http.annotation import Get
 from micronaut.security.annotation import Secured
@@ -28,6 +29,7 @@ class FederationModel:
 
 
 @Get("/fide/ratings/federation/{fed}")
+@Hidden
 @Secured(SecurityRule.IS_ANONYMOUS)
 @View("federation")
 def federation(fed: str) -> HttpResponse | FederationModel:

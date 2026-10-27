@@ -10,3 +10,13 @@ name = 'pyronaut-fide-ratings'
 url = 'jdbc:sqlite:/Users/sdelamo/Documents/sqlite/fide-ratings/fide-ratings.db?foreign_keys=on&busy_timeout=5000&journal_mode=WAL&synchronous=NORMAL'
 driver-class-name = 'org.sqlite.JDBC'
 dialect = 'SQLITE'
+
+# serves config/public/* at /static/*, for example the style sheet at /static/styles.css
+[micronaut.router.static-resources.default]
+enabled = true
+paths = ['classpath:public']
+mapping = '/static/**'
+
+[[micronaut.security.intercept-url-map]]
+pattern = '/static/**'
+access = ['isAnonymous()']

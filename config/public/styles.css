@@ -1,0 +1,20 @@
+body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
+h1 { margin-bottom: .25rem; }
+.period { color: #666; margin-top: 0; }
+dl { display: flex; flex-wrap: wrap; gap: 1.5rem; }
+dt { color: #666; font-size: .85rem; }
+dd { margin: 0; font-weight: 600; }
+.ratings { display: flex; gap: 1rem; margin: 1.5rem 0; }
+.rating { flex: 1; padding: 1rem; border: 1px solid #ccc; border-radius: .5rem; text-align: center; }
+.rating span { display: block; color: #666; font-size: .85rem; }
+.rating strong { font-size: 1.75rem; }
+form { display: flex; gap: .5rem; }
+input { flex: 1; padding: .5rem; font-size: 1rem; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid #ddd; }
+.num { text-align: right; }
+.federations { columns: 14rem; list-style: none; padding: 0; }
+.federations li { padding: .15rem 0; }
+.code { color: #666; font-size: .8rem; }
+.count { color: #666; }
+button { padding: .5rem 1rem; font-size: 1rem; }
