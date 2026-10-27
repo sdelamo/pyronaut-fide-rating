@@ -6,7 +6,7 @@
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
   <changeSet id="01" author="username">
     <createTable tableName="player">
-      <column name="id" type="BIGINT" autoIncrement="true">
+      <column name="id" type="INTEGER" autoIncrement="true">
         <constraints primaryKey="true" nullable="false"/>
       </column>
       <column name="fide_id" type="BIGINT">
@@ -39,8 +39,11 @@
       <column name="birth_year" type="INT"/>
       <column name="flag" type="VARCHAR(4)"/>
     </createTable>
-    <addUniqueConstraint tableName="player" columnNames="fide_id, rating_year, rating_month"
-                         constraintName="uk_player_fide_id_period"/>
+    <createIndex tableName="player" indexName="uk_player_fide_id_period" unique="true">
+      <column name="fide_id"/>
+      <column name="rating_year"/>
+      <column name="rating_month"/>
+    </createIndex>
     <createIndex tableName="player" indexName="idx_player_fed">
       <column name="fed"/>
     </createIndex>
