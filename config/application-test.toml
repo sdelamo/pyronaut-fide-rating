@@ -1,3 +1,7 @@
 [datasources.default]
 url = 'jdbc:sqlite:file:fide_ratings_test?mode=memory&cache=shared&foreign_keys=on'
 maximum-pool-size = 1
+
+[api-keys.importer]
+name = 'importer'
+key = 'test-key'

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  <changeSet id="02" author="username">
+    <!-- finds the latest rating list and counts its players without scanning the table -->
+    <createIndex tableName="player" indexName="idx_player_period">
+      <column name="rating_year"/>
+      <column name="rating_month"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>

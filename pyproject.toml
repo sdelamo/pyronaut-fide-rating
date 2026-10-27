@@ -4,6 +4,9 @@
 [project]
 name = "pyronaut-fide-ratings"
 version = "1.0.0"
+dependencies = [
+    "pygal>=3.1.3",
+]
 dynamic = [
     "scripts",
 ]
@@ -76,10 +79,13 @@ runtime = [
     "io.micronaut:micronaut-http-server-netty",
     "io.micronaut.validation:micronaut-validation",
     "io.micronaut.sql:micronaut-jdbc-sqlite",
+    "io.micronaut.views:micronaut-views-jinjava",
+    "io.micronaut.security:micronaut-security",
 ]
 build = [
     "io.micronaut.data:micronaut-data-model",
     "io.micronaut.data:micronaut-data-processor",
+    "io.micronaut.security:micronaut-security-annotations",
     "io.micronaut.serde:micronaut-serde-processor",
     "io.micronaut.validation:micronaut-validation-processor",
     "io.micronaut:micronaut-http-validation",

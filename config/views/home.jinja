@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FIDE ratings</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
+  form { display: flex; gap: .5rem; }
+  input { flex: 1; padding: .5rem; font-size: 1rem; }
+  .count { color: #666; }
+  button { padding: .5rem 1rem; font-size: 1rem; }
+</style>
+</head>
+<body>
+<h1>FIDE ratings</h1>
+<form action="/fide/ratings" method="get">
+  <input type="text" name="fide_id" inputmode="numeric" pattern="[0-9]+" placeholder="FIDE ID" aria-label="FIDE ID" required autofocus>
+  <button type="submit">Show ratings</button>
+</form>
+{% if players %}<p class="count"><strong>{{ players }}</strong> players in the {{ period }} rating list</p>
+{% endif %}</body>
+</html>
