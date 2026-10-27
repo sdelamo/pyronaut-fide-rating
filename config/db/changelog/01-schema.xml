@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  <changeSet id="01" author="username">
+    <createTable tableName="player">
+      <column name="id" type="BIGINT" autoIncrement="true">
+        <constraints primaryKey="true" nullable="false"/>
+      </column>
+      <column name="fide_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rating_year" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="rating_month" type="INT">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="VARCHAR(64)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="fed" type="VARCHAR(3)"/>
+      <column name="sex" type="VARCHAR(1)"/>
+      <column name="title" type="VARCHAR(4)"/>
+      <column name="w_title" type="VARCHAR(4)"/>
+      <column name="o_title" type="VARCHAR(16)"/>
+      <column name="foa" type="VARCHAR(4)"/>
+      <column name="standard_rating" type="INT" defaultValueNumeric="0"/>
+      <column name="standard_games" type="INT" defaultValueNumeric="0"/>
+      <column name="standard_k" type="INT" defaultValueNumeric="0"/>
+      <column name="rapid_rating" type="INT" defaultValueNumeric="0"/>
+      <column name="rapid_games" type="INT" defaultValueNumeric="0"/>
+      <column name="rapid_k" type="INT" defaultValueNumeric="0"/>
+      <column name="blitz_rating" type="INT" defaultValueNumeric="0"/>
+      <column name="blitz_games" type="INT" defaultValueNumeric="0"/>
+      <column name="blitz_k" type="INT" defaultValueNumeric="0"/>
+      <column name="birth_year" type="INT"/>
+      <column name="flag" type="VARCHAR(4)"/>
+    </createTable>
+    <addUniqueConstraint tableName="player" columnNames="fide_id, rating_year, rating_month"
+                         constraintName="uk_player_fide_id_period"/>
+    <createIndex tableName="player" indexName="idx_player_fed">
+      <column name="fed"/>
+    </createIndex>
+    <createIndex tableName="player" indexName="idx_player_name">
+      <column name="name"/>
+    </createIndex>
+  </changeSet>
+</databaseChangeLog>
