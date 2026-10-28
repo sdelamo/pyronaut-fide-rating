@@ -30,9 +30,9 @@ class FederationLink:
 @Serdeable
 @dataclass
 class HomeModel:
-    """Model for the home.jinja view: the latest rating list (empty before any import)."""
-    players: str
-    period: str
+    """Model for the home.jinja view: the latest rating list (players and period are None before any import)."""
+    players: str | None
+    period: str | None
     top: list[TopPlayer]
     federations: list[FederationLink]
 
@@ -45,7 +45,7 @@ def home() -> HomeModel:
     year = repository.find_latest_rating_year()
     month = repository.find_latest_rating_month(year) if year else None
     if not year or not month:
-        return HomeModel(players="", period="", top=[], federations=[])
+        return HomeModel(players=None, period=None, top=[], federations=[])
     federations = [
         FederationLink(f"/fide/ratings/federation/{code}", federation_flag(code), federation_name(code), code)
         for code in repository.find_federations(year, month)
