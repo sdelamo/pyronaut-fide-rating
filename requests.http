@@ -1,11 +1,11 @@
 ### Demo requests for the FIDE ratings app (PyCharm HTTP Client)
 # Start the app with the key exported, and start PyCharm with the same variable in its environment:
-#   export FIDE_API_KEY=<secret>
+#   export API_KEYS_IMPORTER_KEY=<secret>
 #   pyronaut dev
 # Load the lists first (see scripts/import_ratings.py), or use the POST below to add one player.
 
 @host = http://localhost:8080
-@apiKey = {{$processEnv FIDE_API_KEY}}
+@apiKey = {{$processEnv API_KEYS_IMPORTER_KEY}}
 @fideId = 535004274
 
 ### 1. Home page: search form and the number of players in the latest list

@@ -13,10 +13,10 @@ downloads hold the same data). A file whose name contains "standard", "rapid" or
 as that rating list; the combined players_list_foa.txt is recognised from its header. The files
 of one month are merged by FIDE ID and sent as one entry per player.
 
-The server requires an API key (the FIDE_API_KEY it was started with) in the X-API-KEY header.
+The server requires its API key (the one it reads from API_KEYS_IMPORTER_KEY) in the X-API-KEY header.
 
 Example:
-    FIDE_API_KEY=... python3 scripts/import_ratings.py fide
+    API_KEYS_IMPORTER_KEY=... python3 scripts/import_ratings.py fide
 """
 import argparse
 import http.client
@@ -210,8 +210,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("folder", nargs="?", default="fide", help="folder laid out as <year>/<month>/<file> (default: fide)")
     parser.add_argument("--url", default="http://localhost:8080/api/v1/fide/ratings")
-    parser.add_argument("--api-key", default=os.environ.get("FIDE_API_KEY"),
-                        help="value for the X-API-KEY header (default: the FIDE_API_KEY environment variable)")
+    parser.add_argument("--api-key", default=os.environ.get("API_KEYS_IMPORTER_KEY"),
+                        help="value for the X-API-KEY header (default: the API_KEYS_IMPORTER_KEY environment variable)")
     parser.add_argument("--batch-size", type=int, default=1000, help="entries per request (1 = one request per entry)")
     parser.add_argument("--workers", type=int, default=min(os.cpu_count() or 1, 8),
                         help="parallel requests (default: min(CPU cores, 8); the server has 8 Python contexts "
@@ -222,7 +222,7 @@ def main() -> int:
     args = parser.parse_args()
 
     if not args.api_key and not args.dry_run:
-        sys.stderr.write("An API key is required: set FIDE_API_KEY or pass --api-key\n")
+        sys.stderr.write("An API key is required: set API_KEYS_IMPORTER_KEY or pass --api-key\n")
         return 1
 
     periods = find_rating_files(args.folder)
