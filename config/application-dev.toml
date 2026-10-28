@@ -1,3 +1,6 @@
 [api-keys.importer]
 name = 'importer'
 key = 'xxx.yyy.zzz'
+
+[datasources.default]
+url = 'jdbc:sqlite:data/fide-ratings-sample.db?foreign_keys=on&busy_timeout=5000&journal_mode=WAL&synchronous=NORMAL'

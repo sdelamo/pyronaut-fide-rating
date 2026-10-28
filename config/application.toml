@@ -7,7 +7,6 @@ liquibase.datasources.default.change-log = 'classpath:db/liquibase-changelog.xml
 name = 'pyronaut-fide-ratings'
 
 [datasources.default]
-url = 'jdbc:sqlite:/Users/sdelamo/Documents/sqlite/fide-ratings/fide-ratings.db?foreign_keys=on&busy_timeout=5000&journal_mode=WAL&synchronous=NORMAL'
 driver-class-name = 'org.sqlite.JDBC'
 dialect = 'SQLITE'
 

@@ -13,3 +13,6 @@ build/
 # Tooling
 .idea/
 .DS_Store
+# SQLite sidecar files of the sample database (data/*.db is committed as read-only sample data)
+data/*.db-wal
+data/*.db-shm
