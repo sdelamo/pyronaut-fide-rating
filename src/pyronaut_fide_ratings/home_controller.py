@@ -4,6 +4,7 @@ from typing import Annotated
 from jakarta.inject import Inject
 from io.swagger.v3.oas.annotations import Hidden
 from java.net import URI
+from micronaut.data.model import Pageable
 from micronaut.http import HttpResponse
 from micronaut.http.annotation import Get
 from micronaut.security.annotation import Secured
@@ -42,26 +43,18 @@ class HomeModel:
 @Secured(SecurityRule.IS_ANONYMOUS)
 @View("home")
 def home() -> HomeModel:
-    year = repository.find_latest_rating_year()
-    month = repository.find_latest_rating_month(year) if year else None
+    year = repository.findMaxRating_year()
+    month = repository.findMaxRating_monthByRating_year(year) if year else None
     if not year or not month:
         return HomeModel(players=None, period=None, top=[], federations=[])
     federations = [
         FederationLink(f"/fide/ratings/federation/{code}", federation_flag(code), federation_name(code), code)
-        for code in repository.find_federations(year, month)
+        for code in repository.findDistinctFedByRating_yearAndRating_monthAndFedIsNotNull(year, month)
     ]
     federations.sort(key=lambda federation: federation.name.lower())
     return HomeModel(
-        players=f"{repository.count_by_period(year, month):,}",
+        players=f"{repository.countByRating_yearAndRating_month(year, month):,}",
         period=f"{year}-{month:02d}",
-        top=top_players(repository.find_top_by_standard_rating(year, month, 10)),
+        top=top_players(repository.findByRating_yearAndRating_monthOrderByStandard_ratingDesc(year, month, Pageable.from_(0, 10))),
         federations=federations,
     )
-
-
-# A GET form can only submit a query string, so this turns ?fide_id=... into the path URL
-@Get("/fide/ratings")
-@Hidden
-@Secured(SecurityRule.IS_ANONYMOUS)
-def search(fide_id: int) -> HttpResponse:
-    return HttpResponse.seeOther(URI.create(f"/fide/ratings/{fide_id}"))

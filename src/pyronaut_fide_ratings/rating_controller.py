@@ -4,6 +4,7 @@ from jakarta.inject import Inject
 from io.swagger.v3.oas.annotations import Hidden, Operation
 from io.swagger.v3.oas.annotations.responses import ApiResponse
 from io.swagger.v3.oas.annotations.security import SecurityRequirement
+from java.net import URI
 from micronaut.http import HttpResponse, HttpStatus
 from micronaut.http.annotation import Body, Get, Post, Status
 from micronaut.security.annotation import Secured
@@ -29,7 +30,7 @@ def save_ratings(players: Annotated[list[Player], Body]) -> dict[str, int]:
     saved = 0
     for player in players:
         # re-importing a list must not fail: skip what is already stored
-        if repository.count_by_fide_id_and_period(player.fide_id, player.rating_year, player.rating_month) == 0:
+        if repository.countByFide_idAndRating_yearAndRating_month(player.fide_id, player.rating_year, player.rating_month) == 0:
             repository.save(player)
             saved += 1
     return {"saved": saved, "skipped": len(players) - saved}
@@ -38,7 +39,7 @@ def save_ratings(players: Annotated[list[Player], Body]) -> dict[str, int]:
 @Get("/api/v1/fide/ratings/{fide_id}/latest")
 @Secured(SecurityRule.IS_ANONYMOUS)
 def latest_rating(fide_id: int) -> Player | None:
-    return repository.find_latest_by_fide_id(fide_id)
+    return repository.findFirstByFide_idOrderByRating_yearDescAndRating_monthDesc(fide_id)
 
 
 @Get("/fide/ratings/{fide_id}")
@@ -46,7 +47,15 @@ def latest_rating(fide_id: int) -> Player | None:
 @Secured(SecurityRule.IS_ANONYMOUS)
 @View("profile")
 def rating_profile(fide_id: int) -> HttpResponse | ProfileModel:
-    history = repository.find_all_by_fide_id(fide_id)
+    history = repository.findByFide_idOrderByRating_yearAscAndRating_monthAsc(fide_id)
     if not history:
         return HttpResponse.notFound()
     return profile_model(history)
+
+
+# A GET form can only submit a query string, so this turns ?fide_id=... into the path URL
+@Get("/fide/ratings")
+@Hidden
+@Secured(SecurityRule.IS_ANONYMOUS)
+def search(fide_id: int) -> HttpResponse:
+    return HttpResponse.seeOther(URI.create(f"/fide/ratings/{fide_id}"))

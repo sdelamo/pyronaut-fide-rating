@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from typing import Annotated
 
-from micronaut.data.annotation import GeneratedValue, Id, MappedEntity, Query
+from micronaut.data.annotation import GeneratedValue, Id, MappedEntity
 from micronaut.data.jdbc.annotation import JdbcRepository
+from micronaut.data.model import Pageable
 from micronaut.data.model.query.builder.sql import Dialect
 from micronaut.data.repository import CrudRepository
 from micronaut.serde.annotation import Serdeable
@@ -38,57 +39,36 @@ class Player:
 
 @JdbcRepository(dialect=Dialect.SQLITE)
 class PlayerRepository(CrudRepository[Player, int]):
-    @Query(
-        "SELECT * FROM player "
-        "WHERE fide_id = :fideId AND rating_year = :ratingYear AND rating_month = :ratingMonth"
-    )
-    def find_by_fide_id_and_period(
-        self, fideId: int, ratingYear: int, ratingMonth: int
+    """Micronaut Data derives each query from the method name, which spells the entity's snake_case properties."""
+
+    def findByFide_idAndRating_yearAndRating_month(
+        self, fide_id: int, rating_year: int, rating_month: int
     ) -> Player | None: ...
 
-    @Query(
-        "SELECT * FROM player WHERE fide_id = :fideId "
-        "ORDER BY rating_year DESC, rating_month DESC LIMIT 1"
-    )
-    def find_latest_by_fide_id(self, fideId: int) -> Player | None: ...
+    def findFirstByFide_idOrderByRating_yearDescAndRating_monthDesc(self, fide_id: int) -> Player | None: ...
 
-    @Query("SELECT * FROM player WHERE fed = :fed")
-    def find_by_fed(self, fed: str) -> list[Player]: ...
+    def findByFed(self, fed: str) -> list[Player]: ...
 
-    @Query("SELECT * FROM player WHERE fide_id = :fideId ORDER BY rating_year, rating_month")
-    def find_all_by_fide_id(self, fideId: int) -> list[Player]: ...
+    def findByFide_idOrderByRating_yearAscAndRating_monthAsc(self, fide_id: int) -> list[Player]: ...
 
-    @Query(
-        "SELECT COUNT(*) FROM player "
-        "WHERE fide_id = :fideId AND rating_year = :ratingYear AND rating_month = :ratingMonth"
-    )
-    def count_by_fide_id_and_period(self, fideId: int, ratingYear: int, ratingMonth: int) -> int: ...
+    def countByFide_idAndRating_yearAndRating_month(
+        self, fide_id: int, rating_year: int, rating_month: int
+    ) -> int: ...
 
-    @Query("SELECT MAX(rating_year) FROM player")
-    def find_latest_rating_year(self) -> int | None: ...
+    def countByRating_yearAndRating_month(self, rating_year: int, rating_month: int) -> int: ...
 
-    @Query("SELECT MAX(rating_month) FROM player WHERE rating_year = :ratingYear")
-    def find_latest_rating_month(self, ratingYear: int) -> int | None: ...
+    def findMaxRating_year(self) -> int | None: ...
 
-    @Query("SELECT COUNT(*) FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth")
-    def count_by_period(self, ratingYear: int, ratingMonth: int) -> int: ...
+    def findMaxRating_monthByRating_year(self, rating_year: int) -> int | None: ...
 
-    @Query(
-        "SELECT * FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth "
-        "ORDER BY standard_rating DESC LIMIT :limit"
-    )
-    def find_top_by_standard_rating(self, ratingYear: int, ratingMonth: int, limit: int) -> list[Player]: ...
-
-    @Query(
-        "SELECT * FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth AND fed = :fed "
-        "ORDER BY standard_rating DESC LIMIT :limit"
-    )
-    def find_top_by_federation_and_standard_rating(
-        self, ratingYear: int, ratingMonth: int, fed: str, limit: int
+    def findByRating_yearAndRating_monthOrderByStandard_ratingDesc(
+        self, rating_year: int, rating_month: int, pageable: Pageable
     ) -> list[Player]: ...
 
-    @Query(
-        "SELECT DISTINCT fed FROM player WHERE rating_year = :ratingYear AND rating_month = :ratingMonth "
-        "AND fed IS NOT NULL"
-    )
-    def find_federations(self, ratingYear: int, ratingMonth: int) -> list[str]: ...
+    def findByRating_yearAndRating_monthAndFedOrderByStandard_ratingDesc(
+        self, rating_year: int, rating_month: int, fed: str, pageable: Pageable
+    ) -> list[Player]: ...
+
+    def findDistinctFedByRating_yearAndRating_monthAndFedIsNotNull(
+        self, rating_year: int, rating_month: int
+    ) -> list[str]: ...

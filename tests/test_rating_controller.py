@@ -45,7 +45,7 @@ def test_save_ratings(my_context):
     assert response.json() == {"saved": 1, "skipped": 0}
 
     repository = my_context.get_bean(PlayerRepository)
-    player = repository.find_latest_by_fide_id(535004274)
+    player = repository.findFirstByFide_idOrderByRating_yearDescAndRating_monthDesc(535004274)
     assert player is not None
     assert player.name == "Del Amo Caballero, Sergio"
     assert player.standard_rating == 1598
