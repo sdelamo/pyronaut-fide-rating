@@ -27,6 +27,7 @@ import sys
 import threading
 import time
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
+from dataclasses import dataclass
 from urllib.parse import urlparse
 
 # Header label -> (entry field, "int" or "text")
@@ -138,6 +139,38 @@ def progress(label: str, fraction: float, count: int, started: float) -> None:
     sys.stderr.flush()
 
 
+@dataclass
+class MonthProgress:
+    """What the server has confirmed so far for one month's rating list."""
+    label: str
+    year: int
+    month: int
+    total: int
+    started: float
+    sent: int = 0
+    skipped: int = 0
+    last_report: float = 0.0
+
+
+def collect(done_futures, month: MonthProgress) -> None:
+    """Add the finished requests to the month's totals and report progress."""
+    for future in done_futures:
+        try:
+            saved_now, skipped_now = future.result()
+            month.sent += saved_now + skipped_now
+            month.skipped += skipped_now
+        except (RuntimeError, OSError, http.client.HTTPException) as error:
+            sys.stderr.write(
+                f"\nRequest failed: {error!r}\n"
+                f"{month.label}: {month.sent:,} of {month.total:,} entries confirmed. Entries already imported are "
+                f"skipped, so fix the problem and re-run (--from {month.year}-{month.month:02d} to resume here).\n"
+            )
+            os._exit(1)
+    if time.monotonic() - month.last_report > 0.2:
+        progress(f"{month.label} send ", month.sent / month.total, month.sent, month.started)
+        month.last_report = time.monotonic()
+
+
 def read_period(paths: list, label: str, year: int, month: int) -> dict:
     """Merge all files of one month into {fide_id: entry}."""
     players: dict = {}
@@ -239,44 +272,23 @@ def main() -> int:
         for (year, month), paths in periods.items():
             label = f"[{year}-{month:02d}]"
             players = read_period(paths, label, year, month)
-            started = time.monotonic()
-            sent = skipped = 0
-            last_report = 0.0
+            confirmed = MonthProgress(label, year, month, len(players), time.monotonic())
             pending: set = set()
-
-            def collect(done_futures) -> None:
-                nonlocal sent, skipped, last_report
-                for future in done_futures:
-                    try:
-                        saved_now, skipped_now = future.result()
-                        sent += saved_now + skipped_now
-                        skipped += skipped_now
-                    except (RuntimeError, OSError, http.client.HTTPException) as error:
-                        sys.stderr.write(
-                            f"\nRequest failed: {error!r}\n"
-                            f"{label}: {sent:,} of {len(players):,} entries confirmed. Entries already imported are "
-                            f"skipped, so fix the problem and re-run (--from {year}-{month:02d} to resume here).\n"
-                        )
-                        os._exit(1)
-                if time.monotonic() - last_report > 0.2:
-                    progress(f"{label} send ", sent / len(players), sent, started)
-                    last_report = time.monotonic()
-
             for batch in batches(players, year, month):
                 pending.add(pool.submit(send, batch))
                 if len(pending) >= args.workers * 2:  # keep the queue short
                     done_futures, pending = wait(pending, return_when=FIRST_COMPLETED)
-                    collect(done_futures)
+                    collect(done_futures, confirmed)
             while pending:
                 done_futures, pending = wait(pending, return_when=FIRST_COMPLETED)
-                collect(done_futures)
-            progress(f"{label} send ", 1.0, sent, started)
+                collect(done_futures, confirmed)
+            progress(f"{label} send ", 1.0, confirmed.sent, confirmed.started)
             sys.stderr.write(
-                f"\n{label} {'merged' if args.dry_run else 'imported'} {sent - skipped:,} players "
-                f"({skipped:,} already imported) from {len(paths)} file(s)\n"
+                f"\n{label} {'merged' if args.dry_run else 'imported'} {confirmed.sent - confirmed.skipped:,} players "
+                f"({confirmed.skipped:,} already imported) from {len(paths)} file(s)\n"
             )
-            total += sent
-            skipped_total += skipped
+            total += confirmed.sent
+            skipped_total += confirmed.skipped
     sys.stderr.write(f"Done: {total:,} entries ({skipped_total:,} already imported) from {len(periods)} month(s) in {time.monotonic() - overall:.1f}s\n")
     return 0
 
