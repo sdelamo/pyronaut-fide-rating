@@ -9,6 +9,8 @@ from micronaut.http import HttpResponse
 from micronaut.http.annotation import Get
 from micronaut.security.annotation import Secured
 from micronaut.security.rules import SecurityRule
+from micronaut.scheduling import TaskExecutors
+from micronaut.scheduling.annotation import ExecuteOn
 from micronaut.serde.annotation import Serdeable
 from micronaut.views import View
 
@@ -39,6 +41,7 @@ class HomeModel:
 
 
 @Get("/")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Hidden
 @Secured(SecurityRule.IS_ANONYMOUS)
 @View("home")

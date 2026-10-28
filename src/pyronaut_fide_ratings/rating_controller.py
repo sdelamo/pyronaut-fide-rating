@@ -9,6 +9,8 @@ from micronaut.http import HttpResponse, HttpStatus
 from micronaut.http.annotation import Body, Get, Post, Status
 from micronaut.security.annotation import Secured
 from micronaut.security.rules import SecurityRule
+from micronaut.scheduling import TaskExecutors
+from micronaut.scheduling.annotation import ExecuteOn
 from micronaut.views import View
 
 from .player import Player, PlayerRepository
@@ -18,6 +20,7 @@ repository: Annotated[PlayerRepository, Inject]
 
 
 @Post("/api/v1/fide/ratings")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Operation(
     summary="Save the ratings of a rating list",
     description="Entries already stored for the same FIDE ID, year and month are skipped, so a list can be re-imported.",
@@ -37,12 +40,14 @@ def save_ratings(players: Annotated[list[Player], Body]) -> dict[str, int]:
 
 
 @Get("/api/v1/fide/ratings/{fide_id}/latest")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Secured(SecurityRule.IS_ANONYMOUS)
 def latest_rating(fide_id: int) -> Player | None:
     return repository.findFirstByFide_idOrderByRating_yearDescAndRating_monthDesc(fide_id)
 
 
 @Get("/fide/ratings/{fide_id}")
+@ExecuteOn(TaskExecutors.BLOCKING)
 @Hidden
 @Secured(SecurityRule.IS_ANONYMOUS)
 @View("profile")
